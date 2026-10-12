@@ -1,0 +1,142 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Sword Art Online Онлайн Игра</title>
+<style>
+:root{--bg1:#27507f;--bg2:#0b1a30;--page:#f6f6f4;--box:#fff;--ink:#222;--mut:#666;--line:#d8d8d4;--link:#2a6db0;--bad:#c0392b;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg1:#0c1830;--bg2:#050b16;--page:#16191f;--box:#1d2129;--ink:#e6e6e3;--mut:#9aa0a8;--line:#323843;--link:#7db4ee;--bad:#e5645c}}
+:root[data-theme="dark"]{--bg1:#0c1830;--bg2:#050b16;--page:#16191f;--box:#1d2129;--ink:#e6e6e3;--mut:#9aa0a8;--line:#323843;--link:#7db4ee;--bad:#e5645c}
+html{scroll-padding-top:env(safe-area-inset-top,0px)}
+body{margin:0;font:16px/1.5 Georgia,'Times New Roman',serif;color:var(--ink);background:var(--bg2) linear-gradient(160deg,var(--bg1),var(--bg2)) fixed}
+.wrap{max-width:460px;margin:0 auto;background:var(--page);min-height:100vh;padding:14px 12px 20px}
+h1{font-size:17px;text-align:center;margin:0 0 10px}
+svg.ban{display:block;width:100%;height:auto;border:1px solid var(--line)}
+.box{border:1px solid var(--line);background:var(--box);padding:8px 10px;margin:8px 0;font-size:15px}
+.c{text-align:center}
+.row{display:flex;justify-content:space-between;gap:8px;padding:9px 10px;border:1px solid var(--line);background:var(--box);margin:4px 0;color:var(--link);text-decoration:none}
+.row span{color:var(--mut);white-space:nowrap}
+.row:hover{border-color:var(--link)}
+.row:focus-visible,button:focus-visible,input:focus-visible{outline:2px solid var(--link);outline-offset:1px}
+.dis{opacity:.45;pointer-events:none}
+.bar{height:8px;background:var(--line);margin:2px 0 6px}.bar i{display:block;height:100%}
+.mut{color:var(--mut);font-size:13px}
+.bad{color:var(--bad)}
+input{font:inherit;padding:8px;width:100%;box-sizing:border-box;border:1px solid var(--line);background:var(--box);color:var(--ink);margin:6px 0}
+button{font:inherit;padding:9px 14px;border:1px solid var(--link);background:var(--link);color:#fff;cursor:pointer;width:100%}
+.ft{text-align:center;font-size:13px;color:var(--mut);margin-top:14px;border-top:1px solid var(--line);padding-top:10px}
+</style>
+</head>
+<body>
+<div class="wrap">
+<h1>Sword Art Online Онлайн Игра</h1>
+<svg class="ban" viewBox="0 0 300 110" role="img" aria-label="Айнкрад">
+<defs><linearGradient id="g" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#4f93d6"/><stop offset="1" stop-color="#cfe6f8"/></linearGradient></defs>
+<rect width="300" height="110" fill="url(#g)"/>
+<ellipse cx="60" cy="92" rx="70" ry="12" fill="#fff" opacity=".7"/><ellipse cx="250" cy="98" rx="80" ry="14" fill="#fff" opacity=".8"/>
+<rect x="146" y="8" width="8" height="70" fill="#5b6b7d"/>
+<ellipse cx="150" cy="78" rx="62" ry="7" fill="#46586b"/><ellipse cx="150" cy="68" rx="52" ry="6" fill="#58708a"/><ellipse cx="150" cy="58" rx="42" ry="5" fill="#6b84a0"/><ellipse cx="150" cy="48" rx="32" ry="4" fill="#7c97b3"/><ellipse cx="150" cy="38" rx="22" ry="3" fill="#8fa8c2"/><ellipse cx="150" cy="28" rx="13" ry="2.5" fill="#a3bad0"/>
+</svg>
+<div class="box c" style="font-size:14px">Эта крепость — запредельный виртуальный мир, дающий полную свободу действий, а также являющийся смертельной ловушкой.</div>
+<div class="box c" style="font-size:14px">Сейчас в игре: <b id="on">0</b></div>
+<div id="c"></div>
+<div class="ft">Время <span id="clk">--:--:--</span><br>Фанатский проект. Sword Art Online © Рэки Кавахара. Прогресс сохраняется на сервере.</div>
+</div>
+<script>
+const $=s=>document.querySelector(s),R=(a,b)=>a+Math.floor(Math.random()*(b-a+1));
+const esc=t=>String(t).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+const FL=[["Равнины Начала",["Дикий кабан","Френзи-вепрь","Волк-падальщик"],"Иллфанг, Король Кобольдов"],
+["Бычьи Пустоши",["Бык-рогач","Песчаный скорпион","Дикий бык"],"Баран, Бык-Генерал"],
+["Лес Туманов",["Живой пень","Лесной страж","Гигантская оса"],"Нерий, Злой Древень"],
+["Каменные Катакомбы",["Скелет-воин","Гоблин-лучник","Каменный голем"],"Вождь Каменных Гоблинов"],
+["Чертоги Мрака",["Тёмный рыцарь","Призрак-жнец","Теневой волк"],"Скелет-Жнец"]];
+const WP=[["Малый меч",0,0],["Анил-блейд",3,250],["Сталь-рапира",7,700],["Меч Чёрного Железа",13,1800],["Клинок Тёмной Луны",20,4500]];
+const AR=[["Кожаный жилет",0,0],["Кольчуга",2,200],["Пластинчатый доспех",5,650],["Плащ Чёрного Мечника",9,1700],["Броня Рыцаря Крови",14,4200]];
+const KILLS=6;
+const U='https://nqqzxaisfidvdpfyoiuo.supabase.co',K='sb_publishable_GFAVSk9rjjm-Vp5U18ylEQ_6VCKhChd';
+let S=null,B=null,V='town',T=null,RT=null,AM='',st=null;
+async function api(p,o={}){const h={apikey:K,'Content-Type':'application/json',...(o.h||{})};if(T)h.Authorization='Bearer '+T.access_token;
+ const r=await fetch(U+p,{method:o.m||'GET',headers:h,body:o.b?JSON.stringify(o.b):undefined});
+ const t=await r.text();let j=null;try{j=t?JSON.parse(t):null}catch(e){}
+ if(!r.ok)throw new Error((j&&(j.msg||j.message||j.error_description||j.error))||'Ошибка сети '+r.status);return j}
+const mail=n=>'u'+[...new TextEncoder().encode(n.toLowerCase())].map(b=>b.toString(16).padStart(2,'0')).join('')+'@example.com';
+const ru=m=>/already|duplicate/i.test(m)?'Это имя уже занято.':/Invalid login/i.test(m)?'Неверное имя или пароль.':m;
+function ses(j){T=j;try{localStorage.setItem('sao_ses',JSON.stringify(j))}catch(e){}}
+function save(){if(!S||!T)return;clearTimeout(st);st=setTimeout(push,1200)}
+async function push(){if(!S||!T)return;try{const{name,lv,...d}=S;await api('/rest/v1/players?id=eq.'+T.user.id,{m:'PATCH',h:{Prefer:'return=minimal'},b:{lv,data:d,seen:new Date().toISOString()}})}catch(e){}}
+async function loadMe(){const r=await api('/rest/v1/players?id=eq.'+T.user.id+'&select=name,lv,data');if(!r.length)throw new Error('Персонаж не найден.');S={name:r[0].name,lv:r[0].lv,...r[0].data};if(!S.k)S.k={};S.msg=[]}
+function fail(m,n){AM=m;render();const e=$('#nm');if(e)e.value=n||''}
+async function auth(reg){const n=$('#nm').value.trim(),p=$('#pw').value;
+ if(n.length<2||n.length>12)return fail('Имя: от 2 до 12 символов.',n);
+ if(p.length<6)return fail('Пароль: минимум 6 символов.',n);
+ try{AM='Подождите...';render();
+  const j=await api(reg?'/auth/v1/signup':'/auth/v1/token?grant_type=password',{m:'POST',b:{email:mail(n),password:p}});
+  if(!j.access_token)throw new Error('Отключите Confirm email в настройках Supabase.');
+  ses(j);
+  if(reg){S={name:n,lv:1,exp:0,hp:98,col:60,pot:3,w:0,a:0,f:0,maxF:0,k:{},msg:['Добро пожаловать в Город Начала!']};
+   const{name,lv,...d}=S;await api('/rest/v1/players',{m:'POST',h:{Prefer:'return=minimal'},b:{id:j.user.id,name,lv,data:d}})}
+  else await loadMe();
+  AM='';V='town';render();beat()}catch(e){T=null;S=null;fail(ru(e.message),n)}}
+function out(){push();T=null;S=null;B=null;V='town';try{localStorage.removeItem('sao_ses')}catch(e){}render()}
+async function beat(){push();try{const r=await api('/rest/v1/players?select=name&seen=gte.'+encodeURIComponent(new Date(Date.now()-150000).toISOString()));$('#on').textContent=Math.max(r.length,T?1:0)}catch(e){}}
+async function rate(){V='rate';RT=null;render();try{RT=await api('/rest/v1/players?select=name,lv&order=lv.desc,seen.desc&limit=15')}catch(e){RT=[]}render()}
+async function boot(){try{const q=JSON.parse(localStorage.getItem('sao_ses'));if(q&&q.refresh_token){ses(await api('/auth/v1/token?grant_type=refresh_token',{m:'POST',b:{refresh_token:q.refresh_token}}));await loadMe()}}catch(e){T=null;S=null}render();beat()}
+setInterval(beat,60000);
+setInterval(async()=>{if(!T)return;try{ses(await api('/auth/v1/token?grant_type=refresh_token',{m:'POST',b:{refresh_token:T.refresh_token}}))}catch(e){}},45*60000);
+const need=l=>l*l*12+20,mhp=()=>80+S.lv*18,atk=()=>4+S.lv*2+WP[S.w][1],df=()=>(S.lv>>1)+AR[S.a][1];
+const bar=(v,m,c)=>`<div class="bar"><i style="width:${Math.max(0,Math.min(100,v/m*100))}%;background:${c}"></i></div>`;
+const L=(t,fn,r,d)=>`<a class="row${d?' dis':''}" href="#" onclick="${fn};return false"><div>${t}</div>${r?`<span>${r}</span>`:''}</a>`;
+function go(v){V=v;render()}
+function mk(f,boss){const i=FL[f];
+ if(boss){const h=200+f*150;return{name:i[2],hp:h,max:h,atk:11+f*6,exp:90+f*70,col:200+f*160,boss:1}}
+ const h=26+f*34+R(0,10);return{name:i[1][R(0,2)],hp:h,max:h,atk:4+f*4+R(0,2),exp:7+f*8+R(0,3),col:5+f*7+R(0,4)}}
+function fight(boss){B={m:mk(S.f,boss),c1:0,c2:0,l:['Начался бой!']};S.msg=[];go('battle')}
+function act(t){if(!B)return;const m=B.m,l=[];
+ if(t=='p'){if(S.pot<1)return;S.pot--;const h=50+S.lv*8;S.hp=Math.min(mhp(),S.hp+h);l.push(`Вы выпили зелье: +${h} HP.`)}
+ else if(t=='f'){if(!m.boss&&Math.random()<.6){S.msg=['Вы сбежали.'];B=null;save();return go('town')}l.push(m.boss?'От босса не сбежать!':'Побег не удался.')}
+ else{let k=1,nm='Атака';
+  if(t=='1'){if(B.c1>0)return;k=2;nm='Горизонталь';B.c1=4}
+  if(t=='2'){if(B.c2>0||S.lv<8)return;k=3.5;nm='Старбёрст Стрим';B.c2=6}
+  let d=Math.round((atk()+R(-2,3))*k);const cr=Math.random()<.1;if(cr)d=Math.round(d*1.5);d=Math.max(1,d);m.hp-=d;l.push(`${nm}: ${d} урона${cr?' (крит!)':''}.`)}
+ if(m.hp<=0)return win(l);
+ const d=Math.max(1,m.atk+R(-2,2)-df());S.hp-=d;l.push(`${m.name} бьёт на ${d}.`);
+ if(B.c1>0)B.c1--;if(B.c2>0)B.c2--;
+ if(S.hp<=0)return lose(l);
+ B.l=l;save();render()}
+function win(l){const m=B.m;S.exp+=m.exp;S.col+=m.col;l.push(`${m.name} повержен! +${m.exp} опыта, +${m.col} Col.`);
+ if(m.boss){S.pot+=2;l.push('Награда: 2 зелья.');
+  if(S.f==S.maxF){if(S.f<FL.length-1){S.maxF++;l.push(`Открыт этаж ${S.maxF+1}!`)}else{S.won=1;l.push('Вы прошли все этажи. Игра пройдена!')}}}
+ else{S.k[S.f]=(S.k[S.f]||0)+1;if(Math.random()<.2){S.pot++;l.push('Выпало зелье!')}}
+ while(S.exp>=need(S.lv)){S.exp-=need(S.lv);S.lv++;S.hp=mhp();l.push(`Новый уровень: ${S.lv}!`)}
+ S.msg=l;B=null;save();go('town')}
+function lose(l){const x=Math.floor(S.col*.25);S.col-=x;S.hp=Math.ceil(mhp()/2);
+ S.msg=[...l,`Вы повержены и очнулись в Городе Начала. Потеряно Col: ${x}.`];B=null;save();go('town')}
+function fl(d){S.f=Math.max(0,Math.min(S.maxF,S.f+d));save();render()}
+function rest(){if(S.hp>=mhp()){S.msg=['Вы и так полны сил.']}else if(S.col<25){S.msg=['Не хватает Col (нужно 25).']}else{S.col-=25;S.hp=mhp();S.msg=['Вы отдохнули в гостинице: HP восстановлено.']}save();go('town')}
+function buy(t,i){const a=t=='w'?WP:AR,cur=t=='w'?S.w:S.a;
+ if(i<=cur||S.col<a[i][2]){S.msg=['Покупка невозможна.']}else{S.col-=a[i][2];S[t]=i;S.msg=[`Куплено: ${a[i][0]}.`]}save();go('shop')}
+function pot(){if(S.col<40){S.msg=['Не хватает Col (нужно 40).']}else{S.col-=40;S.pot++;S.msg=['Куплено зелье.']}save();go('shop')}
+function stat(){return `<div class="box"><b>${esc(S.name)}</b>, уровень ${S.lv}<br>HP ${S.hp}/${mhp()}${bar(S.hp,mhp(),'var(--bad)')}Опыт ${S.exp}/${need(S.lv)}${bar(S.exp,need(S.lv),'var(--link)')}Col: ${S.col}, зелий: ${S.pot}<br>Атака ${atk()}, защита ${df()}<br><span class="mut">${WP[S.w][0]}, ${AR[S.a][0]}</span></div>`}
+function msg(){const m=S.msg&&S.msg.length?`<div class="box">${S.msg.map(esc).join('<br>')}</div>`:'';return m}
+function render(){let h='';const c=$('#c');
+ if(!S){h=`<div class="box">Войдите или создайте персонажа.<input id="nm" maxlength="12" placeholder="Имя (2-12 символов)" autocomplete="username"><input id="pw" type="password" placeholder="Пароль (от 6 символов)" autocomplete="current-password"><button onclick="auth(0)">Войти</button><div style="height:6px"></div><button onclick="auth(1)" style="background:transparent;color:var(--link)">Создать персонажа</button>${AM?`<div class="mut" style="margin-top:8px">${esc(AM)}</div>`:''}</div>`}
+ else if(V=='battle'&&B){const m=B.m,k=B.c1>0?`ещё ${B.c1} х.`:'',k2=S.lv<8?'с 8 ур.':B.c2>0?`ещё ${B.c2} х.`:'';
+  h=`<div class="box"><b>${esc(m.name)}</b>${m.boss?' (босс этажа)':''}<br>HP ${Math.max(0,m.hp)}/${m.max}${bar(m.hp,m.max,'var(--bad)')}</div><div class="box">${B.l.map(esc).join('<br>')}</div>`+stat()+
+  L('Атаковать',"act('a')")+L('Горизонталь (урон x2)',"act('1')",k,B.c1>0)+L('Старбёрст Стрим (урон x3.5)',"act('2')",k2,S.lv<8||B.c2>0)+L('Выпить зелье',"act('p')",S.pot,S.pot<1)+L('Бежать',"act('f')")}
+ else if(V=='shop'){h=msg()+stat()+L('Зелье лечения','pot()','40 Col')+'<div class="mut" style="margin:8px 0 2px">Оружие</div>'+
+  WP.map((w,i)=>i==0?'':L(`${w[0]} (+${w[1]} атаки)`,`buy('w',${i})`,S.w>=i?'есть':w[2]+' Col',S.w>=i)).join('')+'<div class="mut" style="margin:8px 0 2px">Броня</div>'+
+  AR.map((w,i)=>i==0?'':L(`${w[0]} (+${w[1]} защиты)`,`buy('a',${i})`,S.a>=i?'есть':w[2]+' Col',S.a>=i)).join('')+L('Назад в город',"S.msg=[];go('town')")}
+ else if(V=='rate'){h='<div class="box c"><b>Рейтинг по уровню</b></div>'+(RT?(RT.map((p,i)=>`<div class="row" style="${p.name==S.name?'font-weight:bold':''}"><div>${i+1}. ${esc(p.name)}</div><span>ур. ${p.lv}</span></div>`).join('')||'<div class="box c">Пока никого.</div>'):'<div class="box c">Загрузка...</div>')+L('Назад в город',"go('town')")}
+ else{const f=FL[S.f],k=S.k[S.f]||0,ok=k>=KILLS;
+  h=msg()+stat()+`<div class="box c"><b>Этаж ${S.f+1}: ${f[0]}</b></div>`+
+  L('Охота на монстров',"fight(false)",'Этаж '+(S.f+1))+
+  L(`Босс: ${f[2]}`,"fight(true)",ok?'готов':`убито ${k}/${KILLS}`,!ok)+
+  `<div style="display:flex;gap:4px">${L('◄ Этаж ниже','fl(-1)','',S.f==0)}${L('Этаж выше ►','fl(1)','',S.f>=S.maxF)}</div>`+
+  L('Магазин',"S.msg=[];go('shop')")+L('Гостиница, отдых','rest()','25 Col')+L('Рейтинг',"rate()")+L('Выйти','out()')+(S.won?'<div class="box c"><b>Вы прошли все этажи!</b></div>':'')}
+ c.innerHTML=h}
+function tick(){$('#clk').textContent=new Date().toTimeString().slice(0,8)}
+tick();setInterval(tick,1000);boot();
+</script>
+</body>
+</html>
