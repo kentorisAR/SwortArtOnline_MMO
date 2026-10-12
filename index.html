@@ -29,6 +29,8 @@ button{font:inherit;padding:9px 14px;border:1px solid var(--link);background:var
 .scene{aspect-ratio:16/9;background-size:cover;background-position:center;border:1px solid var(--line);display:flex;align-items:flex-end;margin-top:6px}
 .scene b{display:block;width:100%;padding:22px 10px 8px;color:#fff;background:linear-gradient(transparent,rgba(0,0,0,.8));font-size:16px}
 .say{font-style:italic}
+.scene{position:relative}
+.logo{position:absolute;top:8px;left:50%;transform:translateX(-50%);width:64%;max-width:320px;mix-blend-mode:screen;pointer-events:none}
 .grid{display:grid;grid-template-columns:1fr 1fr;gap:6px;margin:8px 0}
 .tile{display:flex;align-items:flex-end;aspect-ratio:4/3;background-size:cover;background-position:center;border:1px solid var(--line);color:#fff;text-decoration:none}
 .tile span{display:block;width:100%;padding:20px 8px 6px;background:linear-gradient(transparent,rgba(0,0,0,.85));font-size:14px;line-height:1.25}
@@ -99,7 +101,7 @@ const img=(n,i)=>`background-image:url(img/${n}.jpg),linear-gradient(135deg,hsl(
 const bar=(v,m,c)=>`<div class="bar"><i style="width:${Math.max(0,Math.min(100,v/m*100))}%;background:${c}"></i></div>`;
 const L=(t,fn,r,d)=>`<a class="row${d?' dis':''}" href="#" onclick="${fn};return false"><div>${t}</div>${r?`<span>${r}</span>`:''}</a>`;
 const TL=(ic,t,fn,n,d)=>`<a class="tile${d?' dis':''}" href="#" onclick="${fn};return false" style="${img(n,S.f)}"><span>${ic} ${t}</span></a>`;
-const scene=(n,t,say)=>`<div class="scene" style="${img(n,S?S.f:0)}"><b>${t}</b></div>`+(say?`<div class="box say">${say}</div>`:'');
+const scene=(n,t,say)=>`<div class="scene" style="${img(n,S?S.f:0)}">${n=='login'?'<img class="logo" src="img/logo.jpg" alt="Sword Art Online" onerror="this.remove()">':''}<b>${t}</b></div>`+(say?`<div class="box say">${say}</div>`:'');
 const msg=()=>S.msg&&S.msg.length?`<div class="box">${S.msg.map(esc).join('<br>')}</div>`:'';
 const stat=()=>`<div class="box"><b>${esc(S.name)}</b>${S.hc?' (режим Каябы)':''}, ур. ${S.lv}<br>HP ${S.hp}/${mhp()}${bar(S.hp,mhp(),'var(--bad)')}Опыт ${S.exp}/${need(S.lv)}${bar(S.exp,need(S.lv),'var(--link)')}Col: ${S.col}, зелий: ${S.pot}, трофеев: ${S.mat}<br>Атака ${atk()}, защита ${df()}${S.buf>0?`, бафф ещё ${S.buf} боёв`:''}<br><span class="mut">${WP[S.w][0]} +${S.up}, ${AR[S.a][0]}</span></div>`;
 const pg=(n,t,say)=>msg()+scene(n,t,say)+stat();
