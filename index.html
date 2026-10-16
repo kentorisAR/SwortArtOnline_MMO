@@ -36,6 +36,21 @@ button{font:inherit;padding:9px 14px;border:1px solid var(--link);background:var
 .tile span{display:block;width:100%;padding:20px 8px 6px;background:linear-gradient(transparent,rgba(0,0,0,.85));font-size:14px;line-height:1.25}
 .tile:focus-visible{outline:2px solid var(--link);outline-offset:1px}
 .wrap{max-width:520px}
+.invp{background:linear-gradient(#18242a,#0a1114);border:1px solid #4d5f66;padding:12px;margin:8px 0;color:#d8d2c0}
+.invt{text-align:center;font-size:17px;margin-bottom:10px;color:#e8d6a0;border-bottom:1px solid #4d5f66;padding-bottom:6px}
+.eq{display:grid;grid-template-columns:1fr 1fr 1fr;grid-template-areas:"am hd r2" "rh bd lh" "gl bl bt";gap:6px}
+.slot{min-height:64px;border:1px solid #6b7b80;background:#0d1518;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;padding:4px;font-size:13px}
+.slot small{color:#8a9499;font-size:12px}
+.flask{margin:10px 0 6px;text-align:center}
+.bagg{display:grid;grid-template-columns:repeat(5,1fr);gap:4px}
+.bagg .slot{min-height:48px}
+.fig{position:relative;width:100%;max-width:320px;margin:0 auto;aspect-ratio:300/420}
+.sil{position:absolute;inset:0;width:100%;height:100%;pointer-events:none}
+.fig .slot{position:absolute;min-height:0;font-size:11px;padding:2px;box-sizing:border-box}
+.fig .slot b{font-size:11px;line-height:1.2}
+.fig .slot small{font-size:10px}
+.slot{text-decoration:none;color:inherit}
+a.slot{text-decoration:none}
 </style>
 </head>
 <body>
@@ -57,7 +72,7 @@ const ru=m=>/already|duplicate/i.test(m)?'Это имя уже занято.':/I
 function ses(j){T=j;try{localStorage.setItem('sao_ses',JSON.stringify(j))}catch(e){}}
 function save(){if(!S||!T)return;clearTimeout(st);st=setTimeout(push,1200)}
 async function push(){if(!S||!T)return;try{const{name,lv,...d}=S;await api('/rest/v1/players?id=eq.'+T.user.id,{m:'PATCH',h:{Prefer:'return=minimal'},b:{lv,data:d,seen:new Date().toISOString()}})}catch(e){}}
-async function loadMe(){const r=await api('/rest/v1/players?id=eq.'+T.user.id+'&select=name,lv,data');if(!r.length)throw new Error('Персонаж не найден.');S={name:r[0].name,lv:r[0].lv,...r[0].data};S.k=S.k||{};S.qd=S.qd||{};S.up=S.up||0;S.mat=S.mat||0;S.buf=S.buf||0;S.msg=[]}
+async function loadMe(){const r=await api('/rest/v1/players?id=eq.'+T.user.id+'&select=name,lv,data');if(!r.length)throw new Error('Персонаж не найден.');S={name:r[0].name,lv:r[0].lv,...r[0].data};mig();S.msg=[]}
 function fail(m,n){AM=m;render();const e=$('#nm');if(e)e.value=n||''}
 async function auth(reg){const n=$('#nm').value.trim(),p=$('#pw').value;
  if(n.length<2||n.length>12)return fail('Имя: от 2 до 12 символов.',n);
@@ -90,20 +105,32 @@ const FR=[
 [74,"Камдет","Лизардские Пустоши","Лабиринт Камдета","Блестящие Глаза",["Ящер-воин","Ящер-маг","Гаргулья"]],
 [75,"Колиния","Равнины Колинии","Лабиринт Колинии","Скелет-Жнец",["Скелет-рыцарь","Падший страж","Теневой воин"]],
 [100,"Рубиновый дворец","Сады Дворца","Покои Рубинового дворца","Хитклиф — Кайаба Акихико",["Страж дворца","Рубиновый рыцарь","Тёмный страж"]]];
-const WP=[["Малый меч",0,0],["Анил-блейд",6,300],["Стальной клеймор",14,900],["Лэмбент Лайт",26,2600],["Тёмный Репалсер",42,7500],["Элюсидатор",62,20000]];
-const AR=[["Кожаный жилет",0,0],["Кольчуга",3,250],["Пластинчатый доспех",8,900],["Плащ Полуночи",15,3000],["Мундир Рыцарей Крови",24,8500]];
 const SK=[["Горизонталь",1,2,4],["Ворпал Страйк",6,3,5],["Старбёрст Стрим",12,4.5,6],["Эклипс",20,7,8]];
 const RUM=["«Кобольды на первом этаже звереют перед боссом».","«Без зелий в лабиринт не суйся».","«Кузнецы берут дорого, зато работают честно».","«На высоких этажах монстры бьют больнее, береги броню».","«От босса этажа не сбежать, готовься заранее».","«На 74 этаже объявились Блестящие Глаза. С ним шутки плохи»."];
-const newChar=(n,hc)=>({name:n,lv:1,exp:0,hp:98,col:60,pot:3,mat:0,w:0,a:0,up:0,f:0,maxF:0,k:{},qd:{},buf:0,hc:hc?1:0,msg:['Вы очнулись в Городе Начала.']});
+// Предметы грузятся из items.json (см. loadData). Старые числовые id из прежних сохранений переводятся здесь.
+const LEG=["sword_start","sword_anil","sword_claymore","sword_lambent","sword_repalser","sword_elucidator","armor_leather","armor_chain","armor_plate","armor_cloak","armor_knights_blood","helm_leather","helm_knight","helm_black","amulet_power","amulet_fort","amulet_adv","ring_power","ring_fort","ring_hunter","belt_traveler","belt_knight","belt_assassin","legs_base","legs_knight","legs_black","boots_base","boots_wind","boots_shadow","gloves_base","gloves_knight","gloves_black"];
+let DATA=null,IT={},LIST=[];
+function loadData(d){DATA=d;LIST=[...d.weapons,...d.armor,...d.accessories];IT={};for(const x of LIST)IT[x.id]=x}
+const N=id=>IT[id]?IT[id].name:'???';
+const SN=k=>DATA.slot_names[String(k).replace(/\d$/,'')];
+const ST=id=>{const t=IT[id];return [t.atk?`атака +${t.atk}`:'',t.def?`защита +${t.def}`:''].filter(Boolean).join(', ')};
+const dis=id=>{const t=IT[id],r=t.craft?[t.craft[0],t.craft[1]]:[Math.floor(t.price/300),Math.floor(t.price/1000)];return [Math.max(1,Math.floor(r[0]/2)),Math.floor(r[1]/2)]};
+const newChar=(n,hc)=>({name:n,lv:1,exp:0,hp:98,col:60,pot:3,ore:0,mat:0,up:0,f:0,maxF:0,k:{},qd:{},buf:0,hc:hc?1:0,gear:{rh:'sword_start',bd:'armor_leather',hd:null,am:null,r1:null,r2:null,bl:null,lg:null,bt:null,gl:null},bag:[],msg:['Вы очнулись в Городе Начала.']});
+function mig(){const cv=v=>typeof v=='number'?LEG[v]:v;
+ if(!S.gear){S.gear={rh:LEG[Math.min(S.w||0,5)],bd:LEG[6+Math.min(S.a||0,4)],hd:null,am:null,r1:null,r2:null,bl:null,lg:null,bt:null,gl:null};delete S.w;delete S.a}
+ for(const k in S.gear)S.gear[k]=cv(S.gear[k]);
+ S.bag=(S.bag||[]).map(cv);S.ore=S.ore||0;S.mat=S.mat||0;S.up=S.up||0;S.k=S.k||{};S.qd=S.qd||{};S.buf=S.buf||0}
 const F=()=>FR[S.f],nm=x=>x.replace('*','');
-const need=l=>l*l*10+20,mhp=()=>80+S.lv*18,atk=()=>Math.round((4+S.lv*2+WP[S.w][1]+S.up*2)*(S.buf>0?1.2:1)),df=()=>(S.lv>>1)+AR[S.a][1];
+const need=l=>l*l*10+20,mhp=()=>80+S.lv*18;
+const gs=()=>{let a=0,d=0;for(const k in S.gear){const id=S.gear[k];if(id&&IT[id]){a+=IT[id].atk;d+=IT[id].def}}return{a,d}};
+const atk=()=>Math.round((4+S.lv*2+gs().a+S.up*2)*(S.buf>0?1.2:1)),df=()=>(S.lv>>1)+gs().d;
 const img=(n,i)=>`background-image:url(img/${n}.jpg),linear-gradient(135deg,hsl(${210+(i||0)*14} 45% 32%),hsl(${230+(i||0)*14} 50% 14%))`;
 const bar=(v,m,c)=>`<div class="bar"><i style="width:${Math.max(0,Math.min(100,v/m*100))}%;background:${c}"></i></div>`;
 const L=(t,fn,r,d)=>`<a class="row${d?' dis':''}" href="#" onclick="${fn};return false"><div>${t}</div>${r?`<span>${r}</span>`:''}</a>`;
 const TL=(ic,t,fn,n,d)=>`<a class="tile${d?' dis':''}" href="#" onclick="${fn};return false" style="${img(n,S.f)}"><span>${ic} ${t}</span></a>`;
 const scene=(n,t,say)=>`<div class="scene" style="${img(n,S?S.f:0)}">${n=='login'?'<img class="logo" src="img/logo.jpg" alt="Sword Art Online" onerror="this.remove()">':''}<b>${t}</b></div>`+(say?`<div class="box say">${say}</div>`:'');
 const msg=()=>S.msg&&S.msg.length?`<div class="box">${S.msg.map(esc).join('<br>')}</div>`:'';
-const stat=()=>`<div class="box"><b>${esc(S.name)}</b>${S.hc?' (режим Каябы)':''}, ур. ${S.lv}<br>HP ${S.hp}/${mhp()}${bar(S.hp,mhp(),'var(--bad)')}Опыт ${S.exp}/${need(S.lv)}${bar(S.exp,need(S.lv),'var(--link)')}Col: ${S.col}, зелий: ${S.pot}, трофеев: ${S.mat}<br>Атака ${atk()}, защита ${df()}${S.buf>0?`, бафф ещё ${S.buf} боёв`:''}<br><span class="mut">${WP[S.w][0]} +${S.up}, ${AR[S.a][0]}</span></div>`;
+const stat=()=>`<div class="box"><b>${esc(S.name)}</b>${S.hc?' (режим Каябы)':''}, ур. ${S.lv}<br>HP ${S.hp}/${mhp()}${bar(S.hp,mhp(),'var(--bad)')}Опыт ${S.exp}/${need(S.lv)}${bar(S.exp,need(S.lv),'var(--link)')}Col: ${S.col}, зелий: ${S.pot}, руды: ${S.ore}, трофеев: ${S.mat}<br>Атака ${atk()}, защита ${df()}${S.buf>0?`, бафф ещё ${S.buf} боёв`:''}<br><span class="mut">${N(S.gear.rh)} +${S.up}, ${S.gear.bd?N(S.gear.bd):'без брони'}</span></div>`;
 const pg=(n,t,say)=>msg()+scene(n,t,say)+stat();
 function go(v){V=v;render()}
 function lvl(l){while(S.exp>=need(S.lv)){S.exp-=need(S.lv);S.lv++;S.hp=mhp();l.push(`Новый уровень: ${S.lv}!`)}}
@@ -120,42 +147,83 @@ function act(t){if(!B)return;const m=B.m,l=[];
  const d=Math.max(1,m.atk+R(-2,2)-df());S.hp-=d;l.push(`${m.name} бьёт на ${d}.`);
  B.c=B.c.map(x=>Math.max(0,x-1));
  if(S.hp<=0)return lose(l);B.l=l;save();render()}
-function win(l){const m=B.m;S.exp+=m.exp;S.col+=m.col;const g=R(0,2);S.mat+=g;l.push(`${m.name} повержен! +${m.exp} опыта, +${m.col} Col${g?`, трофеев: ${g}`:''}.`);
+function win(l){const m=B.m;S.exp+=m.exp;S.col+=m.col;const g=R(0,2),o=m.boss?R(3,5):(Math.random()<.5?1:0);S.mat+=g;S.ore+=o;
+ l.push(`${m.name} повержен! +${m.exp} опыта, +${m.col} Col${o?`, руды: ${o}`:''}${g?`, трофеев: ${g}`:''}.`);
  if(m.boss){S.pot+=2;l.push('Награда: 2 зелья.');if(S.f==S.maxF){if(S.f<FR.length-1){S.maxF++;l.push(`Открыт этаж ${FR[S.maxF][0]}!`)}else{S.won=1;l.push('Вы победили Кайабу. Игра пройдена!')}}}
  else{S.k[S.f]=(S.k[S.f]||0)+1;if(Math.random()<.2){S.pot++;l.push('Выпало зелье!')}}
  if(S.buf>0)S.buf--;lvl(l);S.msg=l;B=null;save();go('town')}
 function lose(l){B=null;S.buf=0;
  if(S.hc){S.dead=1;S.hp=0;S.msg=[];clearTimeout(st);push();return go('town')}
  const x=Math.floor(S.col*.25);S.col-=x;S.hp=Math.ceil(mhp()/2);S.msg=[...l,`Вы повержены и очнулись в городе. Потеряно Col: ${x}.`];save();go('town')}
-function pot(){if(S.col<40)S.msg=['Не хватает Col (нужно 40).'];else{S.col-=40;S.pot++;S.msg=['Куплено зелье.']}save();go('market')}
-function sell(){const p=S.mat*(10+S.f*6);S.col+=p;S.msg=[`Продано трофеев на ${p} Col.`];S.mat=0;save();go('market')}
-function buy(t,k){const a=t=='w'?WP:AR;if(k<=S[t]||S.col<a[k][2])S.msg=['Не хватает Col.'];else{S.col-=a[k][2];S[t]=k;if(t=='w')S.up=0;S.msg=['Куплено: '+a[k][0]+'.']}save();go('smithy')}
-function forge(){const u=S.up,c=100*(S.w+1)*(u+1),m=3*(u+1);if(u>=5)return;
- if(S.col<c||S.mat<m)S.msg=['Не хватает Col или трофеев.'];else{S.col-=c;S.mat-=m;if(Math.random()<.9-u*.1){S.up++;S.msg=['Заточка удалась: оружие +'+S.up+'.']}else S.msg=['Заточка не удалась, трофеи потеряны.']}save();go('smithy')}
+
+// ---- Рынок ----
+function pot(){const c=DATA.consumables[0];if(S.col<c.price)S.msg=[`Не хватает Col (нужно ${c.price}).`];else{S.col-=c.price;S.pot++;S.msg=['Куплено: '+c.name+'.']}save();go('market')}
+function spot(){const c=DATA.consumables[0];if(S.pot<1)S.msg=['Нет зелий для продажи.'];else{S.pot--;S.col+=c.sell;S.msg=[`Продано зелье: +${c.sell} Col.`]}save();go('market')}
+function sellRes(k){const p=k=='ore'?15+S.f*8:10+S.f*6,n=S[k];if(!n)S.msg=['Нечего продавать.'];else{S.col+=n*p;S[k]=0;S.msg=[`Продано: ${n} шт. на ${n*p} Col.`]}save();go('market')}
+function buyI(id){const t=IT[id];if(S.col<t.price)S.msg=['Не хватает Col.'];else{S.col-=t.price;S.bag.push(id);S.msg=['Куплено: '+t.name+'. Вещь в сумке, её можно надеть в инвентаре.']}save();go('market')}
+function sellB(bi){const id=S.bag[bi],p=Math.floor(IT[id].price/2);S.bag.splice(bi,1);S.col+=p;S.msg=[`Продано: ${N(id)} за ${p} Col.`];save();go('market')}
 function rest(){if(S.hp>=mhp())S.msg=['Вы и так полны сил.'];else if(S.col<25)S.msg=['Не хватает Col (нужно 25).'];else{S.col-=25;S.hp=mhp();S.msg=['Вы выспались: HP восстановлено.']}save();go('tavern')}
 function meal(){if(S.col<30)S.msg=['Не хватает Col (нужно 30).'];else{S.col-=30;S.buf=5;S.msg=['Рагу съедено: +20% к атаке на 5 боёв.']}save();go('tavern')}
 function info(){if(S.col<60)S.msg=['Не хватает Col (нужно 60).'];else{S.col-=60;const i=S.f;S.msg=[`Арго: «${nm(F()[4])}: HP ${220+i*260}, атака ${12+i*9}. Не лезь без запаса зелий».`]}save();go('tavern')}
 function quest(){const i=S.f;if((S.k[i]||0)<10||S.qd[i])return;S.qd[i]=1;const c=100+i*120,e=50+i*60;S.col+=c;S.exp+=e;S.pot++;S.msg=[`Задание сдано: +${c} Col, +${e} опыта, +1 зелье.`];lvl(S.msg);save();go('board')}
+
+// ---- Кузница ----
+function craft(id){const c=IT[id].craft;if(S.ore<c[0]||S.mat<c[1]||S.col<c[2])S.msg=['Не хватает руды, трофеев или Col.'];else{S.ore-=c[0];S.mat-=c[1];S.col-=c[2];S.bag.push(id);S.msg=['Создано: '+N(id)+'. Вещь в сумке.']}save();go('smithy')}
+function forge(){const u=S.up,t=IT[S.gear.rh].tier,c=100*(t+1)*(u+1),o=2*(u+1);if(u>=5)return;
+ if(S.col<c||S.ore<o)S.msg=['Не хватает Col или руды.'];else{S.col-=c;S.ore-=o;if(Math.random()<.9-u*.1){S.up++;S.msg=['Заточка удалась: оружие +'+S.up+'.']}else S.msg=['Заточка не удалась, руда потеряна.']}save();go('smithy')}
+function disB(bi){const id=S.bag[bi],d=dis(id);S.bag.splice(bi,1);S.ore+=d[0];S.mat+=d[1];S.msg=[`Разобрано: ${N(id)} → руда +${d[0]}, трофеи +${d[1]}.`];save();go('smithy')}
+
+// ---- Инвентарь ----
+function eqp(bi){const id=S.bag[bi],s=IT[id].slot;let k=s;if(s=='r')k=S.gear.r1==null?'r1':S.gear.r2==null?'r2':'r1';
+ const old=S.gear[k];S.gear[k]=id;S.bag.splice(bi,1);if(old)S.bag.push(old);
+ if(s=='rh'){S.up=0;S.msg=['Надето: '+N(id)+'. Заточка оружия сброшена.']}else S.msg=['Надето: '+N(id)+'.'];save();go('inv')}
+function unq(k){if(k=='rh')S.msg=['Оружие нельзя снять, его можно только заменить.'];else if(S.gear[k]){S.bag.push(S.gear[k]);S.gear[k]=null;S.msg=['Снято в сумку.']}save();go('inv')}
+
+// ---- Экраны ----
 function login(){return scene('login','Вход в Айнкрад')+`<div class="box">Войдите или создайте персонажа.<input id="nm" maxlength="12" placeholder="Имя (2-12 символов)" autocomplete="username"><input id="pw" type="password" placeholder="Пароль (от 6 символов)" autocomplete="current-password"><label class="mut"><input id="hc" type="checkbox" style="width:auto;margin:0 6px 0 0">Режим Каябы: смерть навсегда удаляет персонажа</label><div style="height:8px"></div><button onclick="auth(0)">Войти</button><div style="height:6px"></div><button onclick="auth(1)" style="background:transparent;color:var(--link)">Создать персонажа</button>${AM?`<div class="mut" style="margin-top:8px">${esc(AM)}</div>`:''}</div>`}
 function battle(){const m=B.m,f=F();let a=L('Атаковать',"act('a')");
  SK.forEach((s,i)=>{const lock=S.lv<s[1];a+=L(`${s[0]} (x${s[2]})`,`act(${i})`,lock?`с ${s[1]} ур.`:B.c[i]>0?`ещё ${B.c[i]-1} х.`:'',lock||B.c[i]>0)});
  return scene((m.boss?'lab_':'field_')+f[0],m.boss?f[3]:f[2])+`<div class="box"><b>${esc(m.name)}</b>${m.boss?' (босс этажа)':''}<br>HP ${Math.max(0,m.hp)}/${m.max}${bar(m.hp,m.max,'var(--bad)')}</div><div class="box">${B.l.map(esc).join('<br>')}</div>`+stat()+a+L('Выпить зелье',"act('p')",S.pot,S.pot<1)+L('Бежать',"act('f')")}
+const SIL=`<svg class="sil" viewBox="0 0 300 420" aria-hidden="true"><g fill="#0b1316" stroke="#4d5f66" stroke-width="2"><ellipse cx="150" cy="44" rx="32" ry="38"/><rect x="140" y="76" width="20" height="16"/><path d="M100 112 Q150 100 200 112 L204 224 L96 224 Z"/><path d="M100 116 L62 118 L44 262 L66 268 L98 170 Z"/><path d="M200 116 L238 118 L256 262 L234 268 L202 170 Z"/><path d="M98 226 L148 226 L144 410 L108 410 Z"/><path d="M202 226 L152 226 L156 410 L192 410 Z"/></g></svg>`;
+function invS(){const P=(x,y,w,h)=>`left:${x/3}%;top:${y/4.2}%;width:${w/3}%;height:${h/4.2}%`;
+ const sl=(x,y,w,h,k)=>{const id=S.gear[k];const t=id?`<b>${esc(N(id))}${k=='rh'?' +'+S.up:''}</b>`:'';return `<a class="slot" href="#" style="${P(x,y,w,h)}" onclick="unq('${k}');return false">${t}<small>${SN(k)}${id?'':' (пусто)'}</small></a>`};
+ const rows=S.bag.length?S.bag.map((id,bi)=>L(esc(N(id)),`eqp(${bi})`,`${ST(id)} · ${SN(IT[id].slot)}`)).join(''):'<div class="box c">Сумка пуста.</div>';
+ return stat()+`<div class="invp"><div class="invt">Инвентарь</div><div class="fig">${SIL}`+
+ sl(112,4,76,78,'hd')+sl(112,86,76,22,'am')+sl(96,112,108,112,'bd')+sl(96,228,108,26,'bl')+sl(96,258,108,84,'lg')+sl(96,346,108,72,'bt')+
+ sl(4,112,84,96,'rh')+`<div class="slot" style="${P(212,112,84,96)}"><small>Левая рука (позже)</small></div>`+
+ sl(4,212,84,56,'gl')+sl(4,272,84,56,'r1')+sl(212,212,84,56,'r2')+
+ `</div><div class="mut" style="text-align:center">Флаконы: ${S.pot} · Руда: ${S.ore} · Трофеи: ${S.mat}</div><div class="mut" style="margin:8px 0 2px">Сумка (нажмите, чтобы надеть)</div>${rows}</div>`}
+function marketS(){const f=F(),i=S.f,c=DATA.consumables[0];
+ let h=pg('market','Рынок: '+f[1],f[0]==50?'Эгил: «Заходи, друг. Цены честные, прибыль моя».':'Торговец: «Покупайте, продавайте, выбор ваш».');
+ h+='<div class="mut" style="margin:8px 0 2px">Расходники</div>'+L(c.name,'pot()',`${c.price} Col`)+L('Продать зелье','spot()',`${c.sell} Col`,S.pot<1);
+ h+='<div class="mut" style="margin:8px 0 2px">Ресурсы</div>'+L(`Продать руду (${S.ore})`,"sellRes('ore')",`по ${15+i*8} Col`,S.ore<1)+L(`Продать трофеи (${S.mat})`,"sellRes('mat')",`по ${10+i*6} Col`,S.mat<1);
+ h+='<div class="mut" style="margin:8px 0 2px">Купить снаряжение</div>'+LIST.filter(x=>x.price>0).map(x=>L(esc(x.name),`buyI('${x.id}')`,`${x.price} Col · ${ST(x.id)}`)).join('');
+ h+='<div class="mut" style="margin:8px 0 2px">Продать из сумки</div>'+(S.bag.length?S.bag.map((id,bi)=>L(esc(N(id)),`sellB(${bi})`,`${Math.floor(IT[id].price/2)} Col`)).join(''):'<div class="box c">Сумка пуста.</div>');
+ return h}
+function smithyS(){const f=F(),u=S.up,t=IT[S.gear.rh].tier;
+ let h=pg('smithy','Кузница: '+f[1],f[0]==48?'Лисбет: «Лучшее оружие Айнкрада только у меня!»':'Кузнец: «Руда есть, решайте, что куём».');
+ h+='<div class="mut" style="margin:8px 0 2px">Заточка оружия</div>'+L(`${esc(N(S.gear.rh))}: +${u} → +${u+1}`,'forge()',`${100*(t+1)*(u+1)} Col, ${2*(u+1)} руды`,u>=5);
+ h+='<div class="mut" style="margin:8px 0 2px">Создание экипировки</div>'+LIST.filter(x=>x.craft).map(x=>L(`${esc(x.name)} (${ST(x.id)})`,`craft('${x.id}')`,`руда ${x.craft[0]}, тр. ${x.craft[1]}, ${x.craft[2]} Col`,S.ore<x.craft[0]||S.mat<x.craft[1]||S.col<x.craft[2])).join('');
+ h+='<div class="mut" style="margin:8px 0 2px">Разборка из сумки</div>'+(S.bag.length?S.bag.map((id,bi)=>{const d=dis(id);return L(esc(N(id)),`disB(${bi})`,`руда ${d[0]}, тр. ${d[1]}`)}).join(''):'<div class="box c">В сумке пусто.</div>');
+ return h}
 function screen(){const f=F(),i=S.f,fl=f[0],back=L('Назад в город',"go('town')");
- if(V=='market')return pg('market','Рынок: '+f[1],fl==50?'Эгил: «Заходи, друг. Цены честные, прибыль моя».':'Торговец: «Зелья и скупка трофеев. Выгодно всем».')+L('Зелье лечения','pot()','40 Col')+L(`Продать трофеи (${S.mat})`,'sell()',`по ${10+i*6} Col`,S.mat<1)+back;
- if(V=='smithy'){const u=S.up;return pg('smithy','Кузница: '+f[1],fl==48?'Лисбет: «Лучшее оружие Айнкрада только у меня!»':'Кузнец: «Покупай, затачивай, сражайся».')+L(`Заточка: ${WP[S.w][0]} +${u} → +${u+1}`,'forge()',`${100*(S.w+1)*(u+1)} Col, ${3*(u+1)} тр.`,u>=5)+'<div class="mut" style="margin:8px 0 2px">Оружие</div>'+WP.map((w,k)=>k?L(`${w[0]} (+${w[1]} атаки)`,`buy('w',${k})`,S.w>=k?'есть':w[2]+' Col',S.w>=k):'').join('')+'<div class="mut" style="margin:8px 0 2px">Броня</div>'+AR.map((w,k)=>k?L(`${w[0]} (+${w[1]} защиты)`,`buy('a',${k})`,S.a>=k?'есть':w[2]+' Col',S.a>=k):'').join('')+back}
+ if(V=='inv')return msg()+invS()+back;
+ if(V=='market')return marketS()+back;
+ if(V=='smithy')return smithyS()+back;
  if(V=='tavern')return pg('tavern','Таверна: '+f[1],'Арго: '+RUM[(S.lv+i)%RUM.length])+L('Снять комнату, отдых','rest()','25 Col')+L('Рагу, +20% атаки на 5 боёв','meal()','30 Col')+L('Информация о боссе от Арго','info()','60 Col')+back;
  if(V=='board'){const k=S.k[i]||0;return pg('board','Доска заданий: '+f[1],`Зачистка: убейте 10 монстров на этаже ${fl} (${Math.min(k,10)}/10).`)+L('Сдать задание','quest()',S.qd[i]?'сдано':'',k<10||S.qd[i])+back}
  if(V=='gate')return pg('gate','Врата телепортации','Выберите открытый этаж.')+FR.map((r,k)=>k<=S.maxF?L(`Этаж ${r[0]}: ${r[1]}`,`S.f=${k};save();go('town')`,k==i?'вы здесь':''):'').join('')+back;
  if(V=='monument')return msg()+scene('monument','Монумент Жизни')+'<div class="box c">Рейтинг по уровню. ✝ означает погибших в режиме Каябы.</div>'+(RT?(RT.map((p,k)=>`<div class="row" style="${p.name==S.name?'font-weight:bold':''}"><div>${k+1}. ${p.dead?'✝ ':''}${esc(p.name)}</div><span>ур. ${p.lv}</span></div>`).join('')||'<div class="box c">Пока никого.</div>'):'<div class="box c">Загрузка...</div>')+back;
  const k=S.k[i]||0,ok=k>=6;
- return pg('town_'+fl,`Этаж ${fl}: ${f[1]}`)+'<div class="grid">'+TL('🛒','Рынок',"go('market')",'market')+TL('⚒️','Кузница',"go('smithy')",'smithy')+TL('🍺','Таверна',"go('tavern')",'tavern')+TL('📜','Доска заданий',"go('board')",'board')+TL('🗿','Монумент Жизни',"rate()",'monument')+TL('🌀','Врата телепортации',"go('gate')",'gate')+TL('🌲','Поля: '+f[2],"fight(0)",'field_'+fl)+TL('🏰',ok?'Лабиринт: босс':`Лабиринт ${k}/6`,"fight(1)",'lab_'+fl,!ok)+'</div>'+L('Выйти','out()')+(S.won?'<div class="box c"><b>Вы прошли Айнкрад!</b></div>':'')}
+ return pg('town_'+fl,`Этаж ${fl}: ${f[1]}`)+'<div class="grid">'+TL('🛒','Рынок',"go('market')",'market')+TL('⚒️','Кузница',"go('smithy')",'smithy')+TL('🍺','Таверна',"go('tavern')",'tavern')+TL('📜','Доска заданий',"go('board')",'board')+TL('🗿','Монумент Жизни',"rate()",'monument')+TL('🌀','Врата телепортации',"go('gate')",'gate')+TL('🌲','Поля: '+f[2],"fight(0)",'field_'+fl)+TL('🏰',ok?'Лабиринт: босс':`Лабиринт ${k}/6`,"fight(1)",'lab_'+fl,!ok)+'</div>'+L('Инвентарь и персонаж',"go('inv')")+L('Выйти','out()')+(S.won?'<div class="box c"><b>Вы прошли Айнкрад!</b></div>':'')}
 function render(){const c=$('#c');let h;
  if(!S)h=login();
  else if(S.dead)h=scene('monument','Монумент Жизни',`Имя «${esc(S.name)}» перечёркнуто. Вы погибли в Айнкраде.`)+L('Выйти и создать нового','out()');
  else if(V=='battle'&&B)h=battle();else h=screen();
  c.innerHTML=h;if(S&&V!='battle')S.msg=[]}
 function tick(){$('#clk').textContent=new Date().toTimeString().slice(0,8)}
-tick();setInterval(tick,1000);boot();
+tick();setInterval(tick,1000);
+fetch('items.json').then(r=>r.json()).then(d=>{loadData(d);boot()}).catch(()=>{$('#c').innerHTML='<div class="box">Не удалось загрузить данные игры. Проверьте, что items.json лежит рядом с index.html.</div>'});
 </script>
 </body>
 </html>
