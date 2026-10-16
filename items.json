@@ -1,0 +1,389 @@
+{
+ "_about": "Все предметы игры. Чтобы добавить предмет: скопируйте любую запись, придумайте уникальный id (латиницей, без пробелов) и заполните поля. Существующие id не меняйте и не удаляйте, по ним хранятся вещи игроков. price 0 и craft null означает, что предмет не продаётся в магазине, а только создаётся в кузнице. craft: [руда, трофеи, Col]. slot: rh оружие, bd броня, hd шлем, am амулет, r кольцо, bl пояс, lg штаны, bt обувь, gl перчатки.",
+ "slot_names": {
+  "rh": "Правая рука",
+  "bd": "Нагрудная броня",
+  "hd": "Шлем",
+  "am": "Амулет",
+  "r": "Кольцо",
+  "bl": "Пояс",
+  "lg": "Штаны",
+  "bt": "Обувь",
+  "gl": "Перчатки"
+ },
+ "consumables": [
+  {
+   "id": "potion",
+   "name": "Зелье лечения",
+   "price": 40,
+   "sell": 20,
+   "heal": 50
+  }
+ ],
+ "weapons": [
+  {
+   "id": "sword_start",
+   "name": "Малый меч",
+   "slot": "rh",
+   "tier": 0,
+   "atk": 0,
+   "def": 0,
+   "price": 0,
+   "craft": null
+  },
+  {
+   "id": "sword_anil",
+   "name": "Анил-блейд",
+   "slot": "rh",
+   "tier": 1,
+   "atk": 6,
+   "def": 0,
+   "price": 300,
+   "craft": null
+  },
+  {
+   "id": "sword_claymore",
+   "name": "Стальной клеймор",
+   "slot": "rh",
+   "tier": 2,
+   "atk": 14,
+   "def": 0,
+   "price": 900,
+   "craft": null
+  },
+  {
+   "id": "sword_lambent",
+   "name": "Лэмбент Лайт",
+   "slot": "rh",
+   "tier": 3,
+   "atk": 26,
+   "def": 0,
+   "price": 2600,
+   "craft": null
+  },
+  {
+   "id": "sword_repalser",
+   "name": "Тёмный Репалсер",
+   "slot": "rh",
+   "tier": 4,
+   "atk": 42,
+   "def": 0,
+   "price": 0,
+   "craft": [
+    6,
+    4,
+    3000
+   ]
+  },
+  {
+   "id": "sword_elucidator",
+   "name": "Элюсидатор",
+   "slot": "rh",
+   "tier": 5,
+   "atk": 62,
+   "def": 0,
+   "price": 0,
+   "craft": [
+    12,
+    8,
+    12000
+   ]
+  }
+ ],
+ "armor": [
+  {
+   "id": "armor_leather",
+   "name": "Кожаный жилет",
+   "slot": "bd",
+   "tier": 0,
+   "atk": 0,
+   "def": 0,
+   "price": 0,
+   "craft": null
+  },
+  {
+   "id": "armor_chain",
+   "name": "Кольчуга",
+   "slot": "bd",
+   "tier": 1,
+   "atk": 0,
+   "def": 3,
+   "price": 250,
+   "craft": null
+  },
+  {
+   "id": "armor_plate",
+   "name": "Пластинчатый доспех",
+   "slot": "bd",
+   "tier": 2,
+   "atk": 0,
+   "def": 8,
+   "price": 900,
+   "craft": null
+  },
+  {
+   "id": "armor_cloak",
+   "name": "Плащ Полуночи",
+   "slot": "bd",
+   "tier": 3,
+   "atk": 0,
+   "def": 15,
+   "price": 3000,
+   "craft": null
+  },
+  {
+   "id": "armor_knights_blood",
+   "name": "Мундир Рыцарей Крови",
+   "slot": "bd",
+   "tier": 4,
+   "atk": 0,
+   "def": 24,
+   "price": 0,
+   "craft": [
+    10,
+    6,
+    9000
+   ]
+  }
+ ],
+ "accessories": [
+  {
+   "id": "helm_leather",
+   "name": "Кожаный шлем",
+   "slot": "hd",
+   "tier": 0,
+   "atk": 0,
+   "def": 1,
+   "price": 120,
+   "craft": null
+  },
+  {
+   "id": "helm_knight",
+   "name": "Шлем рыцаря",
+   "slot": "hd",
+   "tier": 1,
+   "atk": 0,
+   "def": 3,
+   "price": 800,
+   "craft": null
+  },
+  {
+   "id": "helm_black",
+   "name": "Шлем Чёрного Железа",
+   "slot": "hd",
+   "tier": 2,
+   "atk": 0,
+   "def": 6,
+   "price": 0,
+   "craft": [
+    4,
+    2,
+    1500
+   ]
+  },
+  {
+   "id": "amulet_power",
+   "name": "Амулет Силы",
+   "slot": "am",
+   "tier": 0,
+   "atk": 3,
+   "def": 0,
+   "price": 300,
+   "craft": null
+  },
+  {
+   "id": "amulet_fort",
+   "name": "Амулет Стойкости",
+   "slot": "am",
+   "tier": 0,
+   "atk": 0,
+   "def": 3,
+   "price": 300,
+   "craft": null
+  },
+  {
+   "id": "amulet_adv",
+   "name": "Амулет Авантюриста",
+   "slot": "am",
+   "tier": 1,
+   "atk": 6,
+   "def": 2,
+   "price": 0,
+   "craft": [
+    3,
+    2,
+    1200
+   ]
+  },
+  {
+   "id": "ring_power",
+   "name": "Кольцо Силы",
+   "slot": "r",
+   "tier": 0,
+   "atk": 2,
+   "def": 0,
+   "price": 200,
+   "craft": null
+  },
+  {
+   "id": "ring_fort",
+   "name": "Кольцо Стойкости",
+   "slot": "r",
+   "tier": 0,
+   "atk": 0,
+   "def": 2,
+   "price": 200,
+   "craft": null
+  },
+  {
+   "id": "ring_hunter",
+   "name": "Кольцо Охотника",
+   "slot": "r",
+   "tier": 1,
+   "atk": 4,
+   "def": 0,
+   "price": 0,
+   "craft": [
+    2,
+    2,
+    900
+   ]
+  },
+  {
+   "id": "belt_traveler",
+   "name": "Пояс путника",
+   "slot": "bl",
+   "tier": 0,
+   "atk": 0,
+   "def": 1,
+   "price": 120,
+   "craft": null
+  },
+  {
+   "id": "belt_knight",
+   "name": "Пояс рыцаря",
+   "slot": "bl",
+   "tier": 1,
+   "atk": 0,
+   "def": 3,
+   "price": 700,
+   "craft": null
+  },
+  {
+   "id": "belt_assassin",
+   "name": "Пояс Боевого Ассасина",
+   "slot": "bl",
+   "tier": 2,
+   "atk": 2,
+   "def": 2,
+   "price": 0,
+   "craft": [
+    4,
+    3,
+    2500
+   ]
+  },
+  {
+   "id": "legs_base",
+   "name": "Поножи",
+   "slot": "lg",
+   "tier": 0,
+   "atk": 0,
+   "def": 2,
+   "price": 300,
+   "craft": null
+  },
+  {
+   "id": "legs_knight",
+   "name": "Поножи рыцаря",
+   "slot": "lg",
+   "tier": 1,
+   "atk": 0,
+   "def": 5,
+   "price": 1500,
+   "craft": null
+  },
+  {
+   "id": "legs_black",
+   "name": "Поножи Чёрного Железа",
+   "slot": "lg",
+   "tier": 2,
+   "atk": 0,
+   "def": 9,
+   "price": 0,
+   "craft": [
+    7,
+    5,
+    5000
+   ]
+  },
+  {
+   "id": "boots_base",
+   "name": "Сапоги",
+   "slot": "bt",
+   "tier": 0,
+   "atk": 0,
+   "def": 1,
+   "price": 150,
+   "craft": null
+  },
+  {
+   "id": "boots_wind",
+   "name": "Сапоги ветра",
+   "slot": "bt",
+   "tier": 1,
+   "atk": 0,
+   "def": 3,
+   "price": 900,
+   "craft": null
+  },
+  {
+   "id": "boots_shadow",
+   "name": "Сапоги Тени",
+   "slot": "bt",
+   "tier": 2,
+   "atk": 1,
+   "def": 3,
+   "price": 0,
+   "craft": [
+    4,
+    3,
+    3000
+   ]
+  },
+  {
+   "id": "gloves_base",
+   "name": "Перчатки",
+   "slot": "gl",
+   "tier": 0,
+   "atk": 1,
+   "def": 1,
+   "price": 120,
+   "craft": null
+  },
+  {
+   "id": "gloves_knight",
+   "name": "Перчатки рыцаря",
+   "slot": "gl",
+   "tier": 1,
+   "atk": 2,
+   "def": 2,
+   "price": 800,
+   "craft": null
+  },
+  {
+   "id": "gloves_black",
+   "name": "Перчатки Чёрного Железа",
+   "slot": "gl",
+   "tier": 2,
+   "atk": 4,
+   "def": 3,
+   "price": 0,
+   "craft": [
+    5,
+    3,
+    4000
+   ]
+  }
+ ]
+}
